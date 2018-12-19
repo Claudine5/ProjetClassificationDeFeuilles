@@ -1,0 +1,26 @@
+{
+"hetre": {
+	"dent": false,
+	"convexe": true
+	},
+"chene": { 
+	"dent": false,
+	"convexe": false
+	},
+"bouleau": {
+	"dent": true,
+	"convexe": true
+	},
+"platane": { 
+	"dent": true,
+	"convexe": false
+	},
+"margousier": {
+	"dent": true,
+	"convexe": true
+	},
+"baobab": { 
+	"dent": false,
+	"convexe": false
+	}
+}    
