@@ -84,7 +84,7 @@ def feuille_convexe(segmentation, imageDeBase):
     return convex
 
 
-def redimention(imageDeBase):
+def redimension(imageDeBase):
     # changer la taille d'une image :
     # Choix a verifier : on veut une image qui fait du 500 de largeur
     # et on adapte la hauteur en consequence pour ne pas deformer
@@ -138,7 +138,7 @@ def main():
     # input = cv2.imread("base_donnee_feuille/platane/platane1.jpg")
 
 
-    input = redimention(input)
+    input = redimension(input)
 
     thresh = segmentation(input)
 
