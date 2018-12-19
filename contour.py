@@ -13,7 +13,7 @@ def detection_dent(segmentation, imageDeBase):
 
     contourUtile = max(contours, key=len)
     # cv2.drawContours(imageDeBase, contourUtile, -1, (0,0,255), 2)
-    # cv2.imshow("contour utilise", imageDeBase)
+    # cv2.imshow("contour utilise", segmentation)
 
     list_contour = [] #pour stocker les points qui sont consideres comme des dents
     #on parcourt tous les points du contour et on regarde s'ils sont a peu pres alignes
@@ -42,7 +42,6 @@ def detection_dent(segmentation, imageDeBase):
 
 
 def feuille_convexe(segmentation, imageDeBase):
-
     contours, hierarchy = cv2.findContours(segmentation, 1, cv2.CHAIN_APPROX_TC89_KCOS)
     # on considere que le contours de la feuille est le contour le plus long :
     contourUtile = max(contours, key=len)
@@ -74,6 +73,7 @@ def feuille_convexe(segmentation, imageDeBase):
             defautDetecte += 1
             #affichage des defauts selectionnes
             cv2.circle(imageDeBase, far, 5, [0, 0, 255], -1)
+
     # affichage defauts
     # cv2.imshow('fin', imageDeBase)
 
@@ -112,7 +112,6 @@ def etude_classificateur(convexite, dents, jsonPath):
     # ouverture du fichier JSON et mise sous forme de dictionnaire
     with open(jsonPath) as json_data:
         data_dict = json.load(json_data)
-        print(data_dict)
 
     #On stock les resultats sous forme de couple (espece, pourcentage de criteres remplis)
     listeResultat = []
@@ -130,19 +129,43 @@ def etude_classificateur(convexite, dents, jsonPath):
         listeResultat.append((espece, float(nbrPositif) / float(nbrAttribus) * 100))
     return listeResultat
 
-
 def main():
     # input = cv2.imread("base_donnee_feuille/hetre/hetre1.jpg")
     # input = cv2.imread("base_donnee_feuille/hetre/hetre2.jpg")
     # input = cv2.imread("base_donnee_feuille/chene/chene2.jpg")
     # input = cv2.imread("base_donnee_feuille/margousier/margousier2.jpg")
-    # input = cv2.imread("base_donnee_feuille/bouleau/bouleau2.jpg")
-    input = cv2.imread("base_donnee_feuille/platane/platane1.jpg")
+    input = cv2.imread("base_donnee_feuille/bouleau/bouleau2.jpg")
+    # input = cv2.imread("base_donnee_feuille/platane/platane1.jpg")
 
 
     input = redimention(input)
 
     thresh = segmentation(input)
+
+    #TODO : Essayer de retirer la queue et determiner la forme
+    height, width, channels = input.shape
+    masque = np.zeros((height, width,3))
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contourUtile = max(contours, key=len)
+    index=0
+    for i in range (len(contours)):
+        if len(contours[i])==len(contourUtile):
+            index=i
+
+    cv2.imshow("base", input)
+    cv2.drawContours(masque, contours, index, (255,255,255), -1)
+
+
+    kernel = np.ones((30,30), np.uint8)
+    masque2 = cv2.morphologyEx(masque, cv2.MORPH_OPEN, kernel)
+    cv2.imshow("masque sans queue", masque2)
+
+
+
+    #TODO : Etudier la forme a partir du masque sans la queue
+
+
+
 
     #detection dent :
     dents = detection_dent(thresh, input)
